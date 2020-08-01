@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: GitHub Sync Repository
-      uses: wkod/sync-repo@v0.2.0
+      uses: wkod/sync-repo
       with:
       # GitHub public upstream repo
         upstream_repo: https://github.com/Jermolene/TiddlyWiki5.git
