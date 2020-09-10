@@ -10,10 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: repo-merge
-      uses: WkoD/git-merge@master
       with:
-        source_repo: "https://github.com/Jermolene/TiddlyWiki5.git"
-        source_branch: "master"
-        destination_repo: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/WkoD/TiddlyDnD.git"
-        destination_branch: "master"
+        ref: master
+    - name: merge master
+      run: |
+        git config user.name "$GITHUB_ACTOR"
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        git remote set-url origin 'https://WkoD:${{ secrets.DISPATCH_PAT }}@github.com/${{ github.repository }}.git'
+        git checkout master
+        git pull 'https://github.com/Jermolene/TiddlyWiki5.git' master -X ours --allow-unrelated-histories
+        git push origin master
