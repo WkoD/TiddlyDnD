@@ -18,5 +18,4 @@ jobs:
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
         git checkout master
         git pull 'https://github.com/Jermolene/TiddlyWiki5.git' master -X ours --allow-unrelated-histories
-        cat .gitignore
         git push origin master
