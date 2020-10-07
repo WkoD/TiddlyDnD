@@ -3,3 +3,7 @@
 tmp/
 output/
 node_modules/
+
+# TiddlyDnD
+.github/workflows/*
+!.github/workflows/repo-sync.yml
