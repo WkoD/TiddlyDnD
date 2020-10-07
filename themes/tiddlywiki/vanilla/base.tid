@@ -232,13 +232,10 @@ kbd {
 }
 
 ::selection {
-	background-color: <<colour primary>>;
-	color: <<colour page-background>>;
-}
-
-::-moz-selection {
-	background-color: <<colour primary>>;
-	color: <<colour page-background>>;
+	background-color: Highlight;
+	color: HighlightText;
+	background-color: <<colour selection-background>>;
+	color: <<colour selection-foreground>>;
 }
 
 /*
