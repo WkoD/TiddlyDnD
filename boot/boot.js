@@ -267,8 +267,16 @@ $tw.utils.htmlDecode = function(s) {
 Get the browser location.hash. We don't use location.hash because of the way that Firefox auto-urldecodes it (see http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash)
 */
 $tw.utils.getLocationHash = function() {
-	var parts = window.location.href.split('#');
-	return "#" + (parts.length > 1 ? parts[1] : "");
+	var href = window.location.href;
+	var idx = href.indexOf('#');
+	if(idx === -1) {
+		return "#";
+	} else if(idx < href.length-1 && href[idx+1] === '#') {
+		// Special case: ignore location hash if it itself starts with a #
+		return "#";
+	} else {
+		return href.substring(idx);
+	}
 };
 
 /*
@@ -1824,7 +1832,7 @@ $tw.loadTiddlersFromSpecification = function(filepath,excludeRegExp) {
 	// Read the specification
 	var filesInfo = JSON.parse(fs.readFileSync(filepath + path.sep + "tiddlywiki.files","utf8"));
 	// Helper to process a file
-	var processFile = function(filename,isTiddlerFile,fields) {
+	var processFile = function(filename,isTiddlerFile,fields,isEditableFile) {
 		var extInfo = $tw.config.fileExtensionInfo[path.extname(filename)],
 			type = (extInfo || {}).type || fields.type || "text/plain",
 			typeInfo = $tw.config.contentTypeInfo[type] || {},
@@ -1877,7 +1885,11 @@ $tw.loadTiddlersFromSpecification = function(filepath,excludeRegExp) {
 				}
 			});
 		});
-		tiddlers.push({tiddlers: fileTiddlers});
+		if(isEditableFile) {
+			tiddlers.push({filepath: pathname, hasMetaFile: !!metadata && !isTiddlerFile, tiddlers: fileTiddlers});
+		} else {
+			tiddlers.push({tiddlers: fileTiddlers});
+		}
 	};
 	// Process the listed tiddlers
 	$tw.utils.each(filesInfo.tiddlers,function(tidInfo) {
@@ -1907,7 +1919,7 @@ $tw.loadTiddlersFromSpecification = function(filepath,excludeRegExp) {
 			for(var t=0; t<files.length; t++) {
 				var filename = files[t];
 				if(filename !== "tiddlywiki.files" && !metaRegExp.test(filename) && fileRegExp.test(filename)) {
-					processFile(dirPath + path.sep + filename,dirSpec.isTiddlerFile,dirSpec.fields);
+					processFile(dirPath + path.sep + filename,dirSpec.isTiddlerFile,dirSpec.fields,dirSpec.isEditableFile);
 				}
 			}
 		}
@@ -2260,6 +2272,7 @@ $tw.boot.initStartup = function(options) {
 	$tw.utils.registerFileType("application/zip","base64",".zip");
 	$tw.utils.registerFileType("application/x-zip-compressed","base64",".zip");
 	$tw.utils.registerFileType("image/jpeg","base64",[".jpg",".jpeg"],{flags:["image"]});
+	$tw.utils.registerFileType("image/jpg","base64",[".jpg",".jpeg"],{flags:["image"]});
 	$tw.utils.registerFileType("image/png","base64",".png",{flags:["image"]});
 	$tw.utils.registerFileType("image/gif","base64",".gif",{flags:["image"]});
 	$tw.utils.registerFileType("image/webp","base64",".webp",{flags:["image"]});
