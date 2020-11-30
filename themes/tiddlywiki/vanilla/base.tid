@@ -90,7 +90,7 @@ html button {
 ** Basic element styles
 */
 
-html {
+html, body {
 	font-family: {{$:/themes/tiddlywiki/vanilla/settings/fontfamily}};
 	text-rendering: optimizeLegibility; /* Enables kerning and ligatures etc. */
 	-webkit-font-smoothing: antialiased;
@@ -937,6 +937,11 @@ button.tc-btn-invisible.tc-remove-tag-button {
 
 ">>
 
+	.tc-story-river.tc-static-story-river {
+		margin-right: 0;
+		padding-right: 42px;
+	}
+
 }
 
 @media print {
@@ -1048,7 +1053,7 @@ button.tc-btn-invisible.tc-remove-tag-button {
 .tc-titlebar {
 	font-weight: 300;
 	font-size: 2.35em;
-	line-height: 1.3em;
+	line-height: 1.35em;
 	color: <<colour tiddler-title-foreground>>;
 	margin: 0;
 }
@@ -1159,10 +1164,18 @@ button.tc-btn-invisible.tc-remove-tag-button {
 .tc-tiddler-frame iframe.tc-edit-texteditor {
 	padding: 3px 3px 3px 3px;
 	border: 1px solid <<colour tiddler-editor-border>>;
-	background-color: <<colour tiddler-editor-background>>;
 	line-height: 1.3em;
 	-webkit-appearance: none;
 	font-family: {{$:/themes/tiddlywiki/vanilla/settings/editorfontfamily}};
+}
+
+.tc-tiddler-frame input.tc-edit-texteditor,
+.tc-tiddler-frame textarea.tc-edit-texteditor {
+	background-color: <<colour tiddler-editor-background>>;
+}
+
+.tc-tiddler-frame iframe.tc-edit-texteditor {
+	background-color: <<colour tiddler-background>>;
 }
 
 .tc-tiddler-frame .tc-binary-warning {
@@ -1838,6 +1851,17 @@ html body.tc-body.tc-single-tiddler-window {
 	text-align: right;
 	background-color: <<colour modal-footer-background>>;
 	border-top: 1px solid <<colour modal-footer-border>>;
+}
+
+
+/*
+** Centered modals
+*/
+.tc-modal-centered .tc-modal {
+	width: auto;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) !important;
 }
 
 /*
