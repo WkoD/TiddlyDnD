@@ -82,6 +82,7 @@ input[type="search"] {
 html button {
 	line-height: 1.2;
 	color: <<colour button-foreground>>;
+	fill: <<colour button-foreground>>;
 	background: <<colour button-background>>;
 	border-color: <<colour button-border>>;
 }
@@ -596,6 +597,10 @@ html body.tc-body .tc-btn-rounded:hover svg {
 
 .tc-sidebar-lists button.tc-btn-mini:hover {
 	color: <<colour sidebar-muted-foreground-hover>>;
+}
+
+.tc-sidebar-lists button small {
+	color: <<colour foreground>>;
 }
 
 button svg.tc-image-button, button .tc-image-button img {
@@ -2704,6 +2709,10 @@ body.tc-dirty span.tc-dirty-indicator, body.tc-dirty span.tc-dirty-indicator svg
 	background: white;
 	cursor: pointer;
 	display: inline-block;
+}
+
+::-webkit-file-upload-button {
+	cursor:pointer;
 }
 
 /*
