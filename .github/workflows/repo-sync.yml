@@ -16,6 +16,7 @@ jobs:
       run: |
         git config user.name "$GITHUB_ACTOR"
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        git config pull.rebase false
         git checkout master
         git pull 'https://github.com/Jermolene/TiddlyWiki5.git' master -X theirs --allow-unrelated-histories
         git rm .github/workflows/ci.yml
