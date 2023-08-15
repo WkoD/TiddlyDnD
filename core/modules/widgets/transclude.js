@@ -41,27 +41,43 @@ TranscludeWidget.prototype.execute = function() {
 	this.collectAttributes();
 	this.collectStringParameters();
 	this.collectSlotFillParameters();
-	// Get the parse tree nodes that we are transcluding
-	var target = this.getTransclusionTarget(),
-		parseTreeNodes = target.parseTreeNodes;
-	this.sourceText = target.text;
-	this.sourceType = target.type;
-	this.parseAsInline = target.parseAsInline;
+	// Determine whether we're being used in inline or block mode
+	var parseAsInline = !this.parseTreeNode.isBlock;
+	if(this.transcludeMode === "inline") {
+		parseAsInline = true;
+	} else if(this.transcludeMode === "block") {
+		parseAsInline = false;
+	}
+	// Set 'thisTiddler'
+	this.setVariable("thisTiddler",this.transcludeTitle);
+	var parseTreeNodes, target;
 	// Process the transclusion according to the output type
 	switch(this.transcludeOutput || "text/html") {
 		case "text/html":
-			// No further processing required
+			// Return the parse tree nodes of the target
+			target = this.parseTransclusionTarget(parseAsInline);
+			this.parseAsInline = target.parseAsInline;
+			parseTreeNodes = target.parseTreeNodes;
 			break;
 		case "text/raw":
 			// Just return the raw text
-			parseTreeNodes = [{type: "text", text: this.sourceText}];
+			target = this.getTransclusionTarget();
+			parseTreeNodes = [{type: "text", text: target.text}];
 			break;
 		default:
-			// text/plain
-			var plainText = this.wiki.renderText("text/plain",this.sourceType,this.sourceText,{parentWidget: this});
-			parseTreeNodes = [{type: "text", text: plainText}];
+			// "text/plain" is the plain text result of wikifying the text
+			target = this.parseTransclusionTarget(parseAsInline);
+			var widgetNode = this.wiki.makeWidget(target.parser,{
+				parentWidget: this,
+				document: $tw.fakeDocument
+			});
+			var container = $tw.fakeDocument.createElement("div");
+			widgetNode.render(container,null);
+			parseTreeNodes = [{type: "text", text: container.textContent}];
 			break;
 	}
+	this.sourceText = target.text;
+	this.parserType = target.type;
 	// Set the legacy transclusion context variables only if we're not transcluding a variable
 	if(!this.transcludeVariable) {
 		var recursionMarker = this.makeRecursionMarker();
@@ -158,112 +174,125 @@ TranscludeWidget.prototype.collectSlotFillParameters = function() {
 };
 
 /*
-Get transcluded parse tree nodes as an object {parser:,text:,type:}
+Get transcluded details as an object {text:,type:}
 */
 TranscludeWidget.prototype.getTransclusionTarget = function() {
 	var self = this;
-	// Determine whether we're being used in inline or block mode
-	var parseAsInline = !this.parseTreeNode.isBlock;
-	if(this.transcludeMode === "inline") {
-		parseAsInline = true;
-	} else if(this.transcludeMode === "block") {
-		parseAsInline = false;
+	var text;
+	// Return the text and type of the target
+	if(this.hasAttribute("$variable")) {
+		if(this.transcludeVariable) {
+			// Transcluding a variable
+			var variableInfo = this.getVariableInfo(this.transcludeVariable,{params: this.getOrderedTransclusionParameters()});
+			text = variableInfo.text;
+			return {
+				text: variableInfo.text,
+				type: this.transcludeType
+			};
+		}
+	} else {
+		// Transcluding a text reference
+		var parserInfo = this.wiki.getTextReferenceParserInfo(
+						this.transcludeTitle,
+						this.transcludeField,
+						this.transcludeIndex,
+						{
+							subTiddler: this.transcludeSubTiddler,
+							defaultType: this.transcludeType
+						});
+		return {
+			text: parserInfo.text,
+			type: parserInfo.type
+		};
 	}
+};
+
+/*
+Get transcluded parse tree nodes as an object {text:,type:,parseTreeNodes:,parseAsInline:}
+*/
+TranscludeWidget.prototype.parseTransclusionTarget = function(parseAsInline) {
+	var self = this;
 	var parser;
 	// Get the parse tree
-	if(this.transcludeVariable) {
-		// Transcluding a variable
-		var variableInfo = this.getVariableInfo(this.transcludeVariable,{params: this.getOrderedTransclusionParameters()}),
-			srcVariable = variableInfo && variableInfo.srcVariable;
-		if(srcVariable) {
-			if(srcVariable.isFunctionDefinition) {
-				// Function to return parameters by name or position
-				var fnGetParam = function(name,index) {
-						// Parameter names starting with dollar must be escaped to double dollars
-						if(name.charAt(0) === "$") {
-							name = "$" + name;
-						}
-						// Look for the parameter by name
-						if(self.hasAttribute(name)) {
-							return self.getAttribute(name);
-						// Look for the parameter by index
-						} else if(self.hasAttribute(index + "")) {
-							return self.getAttribute(index + "");
-						} else {
-							return undefined;
-						}
-					},
-					result = this.evaluateVariable(this.transcludeVariable,{params: fnGetParam})[0] || "";
-				parser = {
-					tree: [{
-						type: "text",
-						text: result
-					}],
-					source: result,
-					type: "text/vnd.tiddlywiki"
-				};
-				if(parseAsInline) {
-					parser.tree[0] = {
-						type: "text",
-						text: result
-					};
-				} else {
-					parser.tree[0] = {
-						type: "element",
-						tag: "p",
-						children: [{
+	if(this.hasAttribute("$variable")) {
+		if(this.transcludeVariable) {
+			// Transcluding a variable
+			var variableInfo = this.getVariableInfo(this.transcludeVariable,{params: this.getOrderedTransclusionParameters()}),
+				srcVariable = variableInfo && variableInfo.srcVariable;
+			if(variableInfo.text) {
+				if(srcVariable && srcVariable.isFunctionDefinition) {
+					var result = (variableInfo.resultList ? variableInfo.resultList[0] : variableInfo.text) || "";
+					parser = {
+						tree: [{
 							type: "text",
 							text: result
-						}]
-					}
-				}
-			} else {
-				var cacheKey = (parseAsInline ? "inlineParser" : "blockParser") + (this.transcludeType || "");
-				if(variableInfo.isCacheable && srcVariable[cacheKey]) {
-					parser = srcVariable[cacheKey];
-				} else {
-					parser = this.wiki.parseText(this.transcludeType,variableInfo.text || "",{parseAsInline: parseAsInline, configTrimWhiteSpace: srcVariable.configTrimWhiteSpace});
-					if(variableInfo.isCacheable) {
-						srcVariable[cacheKey] = parser;
-					}
-				}
-			}
-			if(parser) {
-				// Add parameters widget for procedures and custom widgets
-				if(srcVariable.isProcedureDefinition || srcVariable.isWidgetDefinition) {
-					parser = {
-						tree: [
-							{
-								type: "parameters",
-								children: parser.tree
-							}
-						],
-						source: parser.source,
-						type: parser.type
-					}
-					$tw.utils.each(srcVariable.params,function(param) {
-						var name = param.name;
-						// Parameter names starting with dollar must be escaped to double dollars
-						if(name.charAt(0) === "$") {
-							name = "$" + name;
+						}],
+						source: result,
+						type: "text/vnd.tiddlywiki"
+					};
+					if(parseAsInline) {
+						parser.tree[0] = {
+							type: "text",
+							text: result
+						};
+					} else {
+						parser.tree[0] = {
+							type: "element",
+							tag: "p",
+							children: [{
+								type: "text",
+								text: result
+							}]
 						}
-						$tw.utils.addAttributeToParseTreeNode(parser.tree[0],name,param["default"])
-					});
-				} else {
-					// For macros and ordinary variables, wrap the parse tree in a vars widget assigning the parameters to variables named "__paramname__"
-					parser = {
-						tree: [
-							{
-								type: "vars",
-								children: parser.tree
-							}
-						],
-						source: parser.source,
-						type: parser.type
 					}
-					$tw.utils.each(variableInfo.params,function(param) {
-						$tw.utils.addAttributeToParseTreeNode(parser.tree[0],"__" + param.name + "__",param.value)
-					});
+				} else {
+					var cacheKey = (parseAsInline ? "inlineParser" : "blockParser") + (this.transcludeType || "");
+					if(variableInfo.isCacheable && srcVariable[cacheKey]) {
+						parser = srcVariable[cacheKey];
+					} else {
+						parser = this.wiki.parseText(this.transcludeType,variableInfo.text || "",{parseAsInline: parseAsInline, configTrimWhiteSpace: srcVariable && srcVariable.configTrimWhiteSpace});
+						if(variableInfo.isCacheable) {
+							srcVariable[cacheKey] = parser;
+						}
+					}
+				}
+				if(parser) {
+					// Add parameters widget for procedures and custom widgets
+					if(srcVariable && (srcVariable.isProcedureDefinition || srcVariable.isWidgetDefinition)) {
+						parser = {
+							tree: [
+								{
+									type: "parameters",
+									children: parser.tree
+								}
+							],
+							source: parser.source,
+							type: parser.type
+						}
+						$tw.utils.each(srcVariable.params,function(param) {
+							var name = param.name;
+							// Parameter names starting with dollar must be escaped to double dollars
+							if(name.charAt(0) === "$") {
+								name = "$" + name;
+							}
+							$tw.utils.addAttributeToParseTreeNode(parser.tree[0],name,param["default"])
+						});
+					} else if(srcVariable && !srcVariable.isFunctionDefinition) {
+						// For macros and ordinary variables, wrap the parse tree in a vars widget assigning the parameters to variables named "__paramname__"
+						parser = {
+							tree: [
+								{
+									type: "vars",
+									children: parser.tree
+								}
+							],
+							source: parser.source,
+							type: parser.type
+						}
+						$tw.utils.each(variableInfo.params,function(param) {
+							$tw.utils.addAttributeToParseTreeNode(parser.tree[0],"__" + param.name + "__",param.value)
+						});
+					}
 				}
 			}
 		}
@@ -280,24 +309,13 @@ TranscludeWidget.prototype.getTransclusionTarget = function() {
 						});
 	}
 	// Return the parse tree
-	if(parser) {
-		return {
-			parser: parser,
-			parseTreeNodes: parser.tree,
-			parseAsInline: parseAsInline,
-			text: parser.source,
-			type: parser.type
-		};
-	} else {
-		// If there's no parse tree then return the missing slot value
-		return {
-			parser: null,
-			parseTreeNodes: (this.slotFillParseTrees["ts-missing"] || []),
-			parseAsInline: parseAsInline,
-			text: null,
-			type: null
-		};
-	}
+	return {
+		parser: parser,
+		parseTreeNodes: parser ? parser.tree : (this.slotFillParseTrees["ts-missing"] || []),
+		parseAsInline: parseAsInline,
+		text: parser && parser.source,
+		type: parser && parser.type
+	};
 };
 
 /*
@@ -379,6 +397,13 @@ TranscludeWidget.prototype.getTransclusionSlotFill = function(name,defaultParseT
 		return defaultParseTreeNodes || [];
 	}
 };
+
+/*
+Return whether this transclusion should be visible to the slot widget
+*/
+TranscludeWidget.prototype.hasVisibleSlots = function() {
+	return this.getAttribute("$fillignore","no") === "no";
+}
 
 /*
 Compose a string comprising the title, field and/or index to identify this transclusion for recursion detection

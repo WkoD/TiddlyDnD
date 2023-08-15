@@ -580,7 +580,7 @@ button svg, button img, label svg, label img {
 }
 
 button:disabled.tc-btn-invisible  {
-	cursor: default; 
+	cursor: default;
 	color: <<colour muted-foreground>>;
 }
 
@@ -1172,6 +1172,11 @@ button.tc-btn-invisible.tc-remove-tag-button {
 	margin-right: .1em;
 }
 
+.tc-tiddler-title-icon svg {
+	width: 0.9em;
+	height: 0.9em;
+}
+
 .tc-system-title-prefix {
 	color: <<colour muted-foreground>>;
 }
@@ -1386,6 +1391,10 @@ html body.tc-body.tc-single-tiddler-window {
 .tc-editor-toolbar button svg {
 	width: 1.6em;
 	height: 1.2em;
+}
+
+.tc-editor-toolbar .tc-drop-down button.tc-btn-mini {
+	padding: 2px 4px;
 }
 
 .tc-editor-toolbar button:hover {
@@ -2770,13 +2779,9 @@ input.tc-palette-manager-colour-input {
 	white-space: nowrap;
 }
 
-.tc-table-of-contents button {
+.tc-table-of-contents button,
+.tc-table-of-contents .toc-item-muted {
 	color: <<colour sidebar-foreground>>;
-}
-
-button + .tc-toc-caption,
-button > .tc-toc-caption{
-	margin-left: .25em;
 }
 
 .tc-table-of-contents svg {
@@ -3119,6 +3124,30 @@ select {
 }
 
 /*
+** Translink macro
+*/
+
+.tc-translink {
+	background-color: <<colour pre-background>>;
+	border: 1px solid <<colour pre-border>>;
+	padding: 0 3px;
+	border-radius: 3px;
+}
+
+div.tc-translink > div {
+	margin: 1em;
+}
+
+div.tc-translink > div > a:first-child > h1 {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+span.tc-translink > a:first-child {
+	font-weight: bold;
+}
+
+/*
 ** Classes for displaying globals
 */
 
@@ -3154,6 +3183,10 @@ select {
 
 .tc-fill-background {
 	fill: <<colour background>>;
+}
+
+.tc-network-activity-background {
+	fill: <<colour network-activity-foreground>>;
 }
 
 /*
