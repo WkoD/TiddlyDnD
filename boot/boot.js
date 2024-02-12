@@ -1967,10 +1967,10 @@ $tw.loadTiddlersFromSpecification = function(filepath,excludeRegExp) {
 					var value = tiddler[name];
 					switch(fieldInfo.source) {
 						case "subdirectories":
-							value = path.relative(rootPath, filename).split('/').slice(0, -1);
+							value = path.relative(rootPath, filename).split(path.sep).slice(0, -1);
 							break;
 						case "filepath":
-							value = path.relative(rootPath, filename);
+							value = path.relative(rootPath, filename).split(path.sep).join('/');
 							break;
 						case "filename":
 							value = path.basename(filename);
@@ -2453,8 +2453,12 @@ $tw.boot.initStartup = function(options) {
 	$tw.utils.registerFileType("text/x-markdown","utf8",[".md",".markdown"]);
 	$tw.utils.registerFileType("application/enex+xml","utf8",".enex");
 	$tw.utils.registerFileType("application/vnd.openxmlformats-officedocument.wordprocessingml.document","base64",".docx");
+	$tw.utils.registerFileType("application/msword","base64",".doc");
 	$tw.utils.registerFileType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","base64",".xlsx");
+	$tw.utils.registerFileType("application/excel","base64",".xls");
+	$tw.utils.registerFileType("application/vnd.ms-excel","base64",".xls");
 	$tw.utils.registerFileType("application/vnd.openxmlformats-officedocument.presentationml.presentation","base64",".pptx");
+	$tw.utils.registerFileType("application/mspowerpoint","base64",".ppt");
 	$tw.utils.registerFileType("text/x-bibtex","utf8",".bib",{deserializerType:"application/x-bibtex"});
 	$tw.utils.registerFileType("application/x-bibtex","utf8",".bib");
 	$tw.utils.registerFileType("application/epub+zip","base64",".epub");
