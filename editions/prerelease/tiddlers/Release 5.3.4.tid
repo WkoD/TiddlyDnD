@@ -55,11 +55,13 @@ The easiest way to use the <<.wlink TestCaseWidget>> is by creating TestCaseTidd
 Improvements to the following translations:
 
 * Chinese
+* French
 * Macedonian
 * Polish
 
 ! Plugin Improvements
 
+* <<.link-badge-extended "https://github.com/Jermolene/TiddlyWiki5/pull/7821">> the [[lingo Macro]] so that plugins can be translated in a similar way to the core. The pull request also updates the menubar and tiddlyweb plugins to use the new mechanism
 * <<.link-badge-added "https://github.com/Jermolene/TiddlyWiki5/pull/8198">> badges to the core plugins to indicate their [[stability level|Plugin Stability]] from "deprecated", "experimental", "stable" and "legacy". These badges are shown in the plugin library and in the control panel
 
 ! Widget Improvements
@@ -77,14 +79,18 @@ Improvements to the following translations:
 
 ! Hackability Improvements
 
+* <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/7866">> the wikitext parser to generate start/end properties for all nodes
+* <<.link-badge-extended "https://github.com/Jermolene/TiddlyWiki5/pull/8109">> [[WidgetMessage: tm-http-request]] to be able to use Basic Authentication
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/7882">> infinite recursion handling using a custom exception
 * <<.link-badge-added "https://github.com/Jermolene/TiddlyWiki5/pull/7966">> button to the JavaScript error popup allowing tiddlers to be saved to a local JSON file
 * <<.link-badge-updated "https://github.com/Jermolene/TiddlyWiki5/issues/8120">> to latest version of modern-normalize 2.0.0
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8211">> [[tm-permalink|WidgetMessage: tm-permalink]], [[tm-permaview|WidgetMessage: tm-permaview]] and [[tm-copy-to-clipboard|WidgetMessage: tm-copy-to-clipboard]] messages to allow the notification text to be customised
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8225">> [[WidgetMessage: tm-http-request]] to allow the default headers to be suppressed
+* <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8097">> window title rendering to automatically include global definitions
 
 ! Bug Fixes
 
+* <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8233">> nested functions not resolving variables created in filter runs
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8186">> nested [[Block Quotes in WikiText]]
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/7933">> TiddlyWikiClassic build process
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/7935">> LinkWidget not refreshing when the `to` attribute changes
@@ -103,6 +109,9 @@ Improvements to the following translations:
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/issues/8095">> proper DOCTYPE for the open window template
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/issues/7945">> theme font size settings to open in new window CSS
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8098">> backlink parser to prevent it parsing binary tiddlers
+* <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8203">> issue where default parameters were not applied when a ParametersWidget did not find a parent TranscludeWidget
+* <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8222">> crash when using [[splitregexp Operator]] with a regular expression that includes capture groups
+* <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8239">> ActionLogWidget evaluating all variables in scope
 
 ! Node.js Improvements
 
@@ -140,6 +149,7 @@ eschlon
 etardiff
 flibbles
 FSpark
+Gk0Wk
 hoelzro
 jinix6
 joshuafontany
@@ -154,5 +164,6 @@ saqimtiaz
 sarna
 Telumire
 twMat
+xcazin
 yaisog
 """>>
