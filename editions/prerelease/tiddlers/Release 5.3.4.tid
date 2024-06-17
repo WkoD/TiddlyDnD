@@ -52,7 +52,9 @@ The easiest way to use the <<.wlink TestCaseWidget>> is by creating TestCaseTidd
 
 ! Translation improvements
 
-Improvements to the following translations:
+<<.link-badge-extended "https://github.com/Jermolene/TiddlyWiki5/pull/7821">> the [[lingo Macro]] so that plugins can be translated in a similar way to the core. The menubar and tiddlyweb plugins have been updated to use the new mechanism, and we welcome pull requests to convert more of the core plugins to the new mechanism.
+
+This release also includes improvements to the following translations:
 
 * Chinese
 * French
@@ -61,7 +63,6 @@ Improvements to the following translations:
 
 ! Plugin Improvements
 
-* <<.link-badge-extended "https://github.com/Jermolene/TiddlyWiki5/pull/7821">> the [[lingo Macro]] so that plugins can be translated in a similar way to the core. The pull request also updates the menubar and tiddlyweb plugins to use the new mechanism
 * <<.link-badge-added "https://github.com/Jermolene/TiddlyWiki5/pull/8198">> badges to the core plugins to indicate their [[stability level|Plugin Stability]] from "deprecated", "experimental", "stable" and "legacy". These badges are shown in the plugin library and in the control panel
 
 ! Widget Improvements
@@ -70,7 +71,7 @@ Improvements to the following translations:
 
 ! Filter Improvements
 
-* <<.link-badge-added "https://github.com/Jermolene/TiddlyWiki5/pull/7966">> new [[backtranscludes Operator]]
+* <<.link-badge-added "https://github.com/Jermolene/TiddlyWiki5/pull/6081">> new [[transcludes|transcludes Operator]] and [[backtranscludes|backtranscludes Operator]] operators
 
 ! Usability Improvements
 
@@ -81,11 +82,11 @@ Improvements to the following translations:
 
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/7866">> the wikitext parser to generate start/end properties for all nodes
 * <<.link-badge-extended "https://github.com/Jermolene/TiddlyWiki5/pull/8109">> [[WidgetMessage: tm-http-request]] to be able to use Basic Authentication
+* <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8225">> [[WidgetMessage: tm-http-request]] to allow the default headers to be suppressed
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/7882">> infinite recursion handling using a custom exception
 * <<.link-badge-added "https://github.com/Jermolene/TiddlyWiki5/pull/7966">> button to the JavaScript error popup allowing tiddlers to be saved to a local JSON file
 * <<.link-badge-updated "https://github.com/Jermolene/TiddlyWiki5/issues/8120">> to latest version of modern-normalize 2.0.0
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8211">> [[tm-permalink|WidgetMessage: tm-permalink]], [[tm-permaview|WidgetMessage: tm-permaview]] and [[tm-copy-to-clipboard|WidgetMessage: tm-copy-to-clipboard]] messages to allow the notification text to be customised
-* <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8225">> [[WidgetMessage: tm-http-request]] to allow the default headers to be suppressed
 * <<.link-badge-improved "https://github.com/Jermolene/TiddlyWiki5/pull/8097">> window title rendering to automatically include global definitions
 
 ! Bug Fixes
@@ -126,7 +127,7 @@ Improvements to the following translations:
 
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8195">> issue with fakedom TW_Node inheritence
 * <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8099">> SJCL library creating variables in global scope
-* <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8179">> fix `widget.getVariableInfo()` to always return a `params` property
+* <<.link-badge-fixed "https://github.com/Jermolene/TiddlyWiki5/pull/8179">> `widget.getVariableInfo()` to always return a `params` property
 
 ! Infrastructure Improvements
 
