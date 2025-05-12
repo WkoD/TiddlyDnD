@@ -20,5 +20,6 @@ jobs:
         git checkout master
         git pull 'https://github.com/Jermolene/TiddlyWiki5.git' master -X theirs --allow-unrelated-histories
         git rm .github/workflows/c*.yml
-        git commit -m "remove c*.yml"
+        git rm .github/workflows/pr*.yml
+        git commit -m "remove Tiddlywiki yml"
         git push origin master
